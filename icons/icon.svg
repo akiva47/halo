@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <radialGradient id="bg" cx="30%" cy="20%" r="100%">
+      <stop offset="0" stop-color="#2a1c6e"/>
+      <stop offset=".55" stop-color="#0c0b24"/>
+      <stop offset="1" stop-color="#05060d"/>
+    </radialGradient>
+    <linearGradient id="r1" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7c5cff"/><stop offset="1" stop-color="#00e5c8"/></linearGradient>
+    <linearGradient id="r2" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#00e5c8"/><stop offset="1" stop-color="#ff4fd8"/></linearGradient>
+    <linearGradient id="r3" x1="1" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ff4fd8"/><stop offset="1" stop-color="#7c5cff"/></linearGradient>
+  </defs>
+  <rect width="512" height="512" fill="url(#bg)"/>
+  <g fill="none" stroke-width="42" stroke-linecap="round" transform="rotate(-90 256 256)">
+    <circle cx="256" cy="256" r="178" stroke="url(#r1)" stroke-dasharray="950 1200"/>
+    <circle cx="256" cy="256" r="124" stroke="url(#r2)" stroke-dasharray="590 800"/>
+    <circle cx="256" cy="256" r="70" stroke="url(#r3)" stroke-dasharray="370 500"/>
+  </g>
+</svg>

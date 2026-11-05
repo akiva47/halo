@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="he" dir="rtl" data-theme="aurora" data-mode="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Halo</title>
+  <meta name="description" content="Halo: שלוש טבעות ליום אחד. מיקוד, משימות ונשימה.">
+  <meta name="theme-color" content="#05060d">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Halo">
+  <link rel="apple-touch-icon" href="icons/icon-180.png">
+  <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="aurora" aria-hidden="true"><i></i><i></i><i></i></div>
+  <div class="grain" aria-hidden="true"></div>
+  <canvas id="confetti" aria-hidden="true"></canvas>
+
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <defs>
+      <linearGradient id="g1" x1="0" y1="0" x2="1" y2="1"><stop offset="0" class="s-a"/><stop offset="1" class="s-b"/></linearGradient>
+      <linearGradient id="g2" x1="0" y1="1" x2="1" y2="0"><stop offset="0" class="s-b"/><stop offset="1" class="s-c"/></linearGradient>
+      <linearGradient id="g3" x1="1" y1="0" x2="0" y2="1"><stop offset="0" class="s-c"/><stop offset="1" class="s-a"/></linearGradient>
+    </defs>
+  </svg>
+
+  <header class="top">
+    <div>
+      <p class="date" id="date"></p>
+      <h1 id="greeting"></h1>
+    </div>
+    <span class="wordmark" aria-hidden="true">Halo</span>
+  </header>
+
+  <main>
+    <!-- Today -->
+    <section class="view today" id="view-today">
+      <div class="glass rings-card" id="ringsCard">
+        <div class="rings">
+          <svg viewBox="0 0 240 240" role="img" aria-label="התקדמות יומית">
+            <g transform="rotate(-90 120 120)" fill="none" stroke-width="20" stroke-linecap="round">
+              <circle class="track" cx="120" cy="120" r="104"/>
+              <circle class="track" cx="120" cy="120" r="80"/>
+              <circle class="track" cx="120" cy="120" r="56"/>
+              <circle class="ring" id="ring-focus" cx="120" cy="120" r="104" pathLength="100" stroke="url(#g1)"/>
+              <circle class="ring" id="ring-tasks" cx="120" cy="120" r="80" pathLength="100" stroke="url(#g2)"/>
+              <circle class="ring" id="ring-breath" cx="120" cy="120" r="56" pathLength="100" stroke="url(#g3)"/>
+            </g>
+          </svg>
+          <div class="rings-center"><strong id="total">0%</strong></div>
+        </div>
+        <ul class="legend">
+          <li><i class="dot d1"></i><span>מיקוד</span><b id="val-focus"></b></li>
+          <li><i class="dot d2"></i><span>משימות</span><b id="val-tasks"></b></li>
+          <li><i class="dot d3"></i><span>נשימה</span><b id="val-breath"></b></li>
+        </ul>
+        <p class="coach" id="coach"></p>
+      </div>
+
+      <div class="stack">
+        <div class="glass card">
+          <div class="card-head">
+            <h2>השבוע</h2>
+            <span class="pill" id="streak"></span>
+          </div>
+          <ol class="week" id="week"></ol>
+        </div>
+
+        <div class="glass card">
+          <div class="card-head"><h2>משימות</h2><span class="muted" id="taskCount"></span></div>
+          <form id="taskForm" class="task-form" autocomplete="off">
+            <input id="taskInput" type="text" maxlength="120" placeholder="מה על הפרק היום?" aria-label="משימה חדשה" enterkeyhint="done">
+            <button type="submit" class="add" aria-label="הוספת משימה">
+              <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+            </button>
+          </form>
+          <ul class="tasks" id="tasks"></ul>
+          <p class="empty" id="tasksEmpty">ריק כאן. מה הדבר האחד שיעשה את היום?</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Focus -->
+    <section class="view center-view" id="view-focus" hidden>
+      <div class="dial">
+        <svg viewBox="0 0 300 300" aria-hidden="true">
+          <g transform="rotate(-90 150 150)" fill="none" stroke-width="16" stroke-linecap="round">
+            <circle class="track" cx="150" cy="150" r="136"/>
+            <circle class="ring" id="timerRing" cx="150" cy="150" r="136" pathLength="100" stroke="url(#g1)"/>
+          </g>
+        </svg>
+        <div class="dial-center">
+          <time id="timerText" dir="ltr">25:00</time>
+          <span id="timerStatus" aria-live="polite">מוכנים?</span>
+        </div>
+      </div>
+      <div class="seg" id="presets" role="group" aria-label="משך הסשן">
+        <button type="button" data-min="15">15 דק׳</button>
+        <button type="button" data-min="25">25 דק׳</button>
+        <button type="button" data-min="50">50 דק׳</button>
+      </div>
+      <div class="actions">
+        <button type="button" class="btn primary" id="timerToggle">התחלה</button>
+        <button type="button" class="btn ghost" id="timerReset">איפוס</button>
+      </div>
+    </section>
+
+    <!-- Breath -->
+    <section class="view center-view" id="view-breath" hidden>
+      <div class="orb-wrap"><div class="orb" id="orb"></div></div>
+      <p class="breath-label" id="breathLabel" aria-live="polite">נשימה אחת בכל פעם</p>
+      <p class="muted breath-time" id="breathTime" dir="ltr">0:00</p>
+      <div class="seg" id="patterns" role="group" aria-label="תבנית נשימה">
+        <button type="button" data-p="box">ריבוע</button>
+        <button type="button" data-p="relax">4-7-8</button>
+        <button type="button" data-p="coherent">קוהרנטי</button>
+      </div>
+      <div class="actions">
+        <button type="button" class="btn primary" id="breathToggle">התחלה</button>
+      </div>
+    </section>
+
+    <!-- Settings -->
+    <section class="view settings" id="view-settings" hidden>
+      <div class="glass card">
+        <div class="card-head"><h2>צבעים</h2></div>
+        <div class="swatches" id="swatches" role="group" aria-label="ערכת צבעים">
+          <button type="button" data-theme-id="aurora"><i></i><span>אורורה</span></button>
+          <button type="button" data-theme-id="ember"><i></i><span>גחלת</span></button>
+          <button type="button" data-theme-id="lagoon"><i></i><span>לגונה</span></button>
+          <button type="button" data-theme-id="orchid"><i></i><span>סחלב</span></button>
+        </div>
+      </div>
+      <div class="glass card">
+        <div class="card-head"><h2>מראה</h2></div>
+        <div class="seg wide" id="modes" role="group" aria-label="מראה">
+          <button type="button" data-mode-id="auto">אוטומטי</button>
+          <button type="button" data-mode-id="dark">כהה</button>
+          <button type="button" data-mode-id="light">בהיר</button>
+        </div>
+      </div>
+      <div class="glass card">
+        <div class="card-head"><h2>יעדים יומיים</h2></div>
+        <div id="goals" class="goals"></div>
+      </div>
+      <div class="glass card">
+        <div class="card-head"><h2>באייפון</h2></div>
+        <p class="muted">בספארי: שיתוף ← הוספה למסך הבית. Halo ייפתח במסך מלא ויעבוד גם בלי אינטרנט.</p>
+      </div>
+      <button type="button" class="btn danger" id="resetAll">איפוס כל הנתונים</button>
+    </section>
+  </main>
+
+  <nav class="tabbar glass" id="tabbar" aria-label="ניווט">
+    <span class="tab-indicator" id="tabIndicator" aria-hidden="true"></span>
+    <button type="button" data-view="today" aria-label="היום">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4.5"/></svg><span>היום</span>
+    </button>
+    <button type="button" data-view="focus" aria-label="מיקוד">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2M9.5 2.5h5"/></svg><span>מיקוד</span>
+    </button>
+    <button type="button" data-view="breath" aria-label="נשימה">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9h11a3 3 0 1 0-3-3M3 14h15a3 3 0 1 1-3 3M3 19h6"/></svg><span>נשימה</span>
+    </button>
+    <button type="button" data-view="settings" aria-label="הגדרות">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2"/><circle cx="8" cy="17" r="2"/></svg><span>הגדרות</span>
+    </button>
+  </nav>
+
+  <script src="app.js"></script>
+</body>
+</html>
